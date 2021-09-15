@@ -38,7 +38,9 @@ fn impl_validate(ast: &syn::DeriveInput) -> proc_macro2::TokenStream {
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     // The Validate trait implementation
-    let validate_trait_impl = if !has_arg {
+    let validate_trait_impl = if has_arg {
+        quote!()
+    } else {
         quote!(
             impl #impl_generics ::validator::Validate for #ident #ty_generics #where_clause {
                 fn validate(&self) -> ::std::result::Result<(), ::validator::ValidationErrors> {
@@ -47,8 +49,6 @@ fn impl_validate(ast: &syn::DeriveInput) -> proc_macro2::TokenStream {
                 }
             }
         )
-    } else {
-        quote!()
     };
 
     // Adding the validator lifetime 'v_a
